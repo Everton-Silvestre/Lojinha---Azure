@@ -6,6 +6,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.AzureAD.UI;
+using Microsoft.AspNetCore.Authentication;
+using Lojinha.Infrastructure.Storage;
+using Lojinha.Infrastructure.Redis;
+using Lojinha.Core.Services;
+using AutoMapper;
+using Lojinha.Infrastructure.Mappings;
 
 namespace Lojinha
 {
@@ -21,6 +28,21 @@ namespace Lojinha
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None;
+            });
+
+            services.AddAuthentication(AzureADDefaults.AuthenticationScheme)
+                .AddAzureAD(options => Configuration.Bind("AzureAd",options));
+
+            services.AddSingleton<IRedisCache, RedisCache>();
+            services.AddScoped<IProdutoServices, ProdutoServices>();
+            services.AddScoped<IAzureStorage, AzureStorage>();
+
+            Mapper.Initialize(options => options.AddProfile<ProdutoProfile>());
+            services.AddAutoMapper();
+            .+
             services.AddMvc();
         }
 
@@ -38,6 +60,8 @@ namespace Lojinha
             }
 
             app.UseStaticFiles();
+
+            app.UseAuthentication(); 
 
             app.UseMvc(routes =>
             {
