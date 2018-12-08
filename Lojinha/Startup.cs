@@ -36,13 +36,15 @@ namespace Lojinha
             services.AddAuthentication(AzureADDefaults.AuthenticationScheme)
                 .AddAzureAD(options => Configuration.Bind("AzureAd",options));
 
+                        
             services.AddSingleton<IRedisCache, RedisCache>();
             services.AddScoped<IProdutoServices, ProdutoServices>();
             services.AddScoped<IAzureStorage, AzureStorage>();
+            services.AddScoped<ICarrinhoService, CarrinhoService>();
 
             Mapper.Initialize(options => options.AddProfile<ProdutoProfile>());
             services.AddAutoMapper();
-            .+
+            
             services.AddMvc();
         }
 

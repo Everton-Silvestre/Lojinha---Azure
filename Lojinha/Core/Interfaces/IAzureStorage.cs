@@ -8,6 +8,7 @@ namespace Lojinha.Infrastructure.Storage
     {
         void AddProduto(Produto produto);
 
+        Task<Produto> ObterProduto(string id);
         Task<List<Produto>> ObterProdutos();
     }
 }

@@ -15,7 +15,6 @@ namespace Lojinha.Infrastructure.Storage
     {
         private readonly CloudStorageAccount _account;
         private readonly CloudTableClient _tableClient;
-
         public AzureStorage(IConfiguration config)
         {
             _account = CloudStorageAccount.Parse(config.GetSection("Azure:Storage").Value);
@@ -37,7 +36,6 @@ namespace Lojinha.Infrastructure.Storage
 
 
         }
-
         public async Task<List<Produto>> ObterProdutos()
         {
             var table = _tableClient.GetTableReference("produtos");
@@ -51,14 +49,39 @@ namespace Lojinha.Infrastructure.Storage
 
             TableContinuationToken token = null;
 
-            var segment = await table.ExecuteQuerySegmentedAsync(query,token);
+            var segment = await table.ExecuteQuerySegmentedAsync(query, token);
             var produtoEntity = segment.ToList();
 
             return produtoEntity
-                .Where(x=>x.Produto != null)                
+                .Where(x => x.Produto != null && x != null)
                 .Select(x => JsonConvert.DeserializeObject<Produto>(x.Produto)).ToList();
 
             //TableOperation operation = TableOperation.Retrieve("13net");
+        }
+
+        public async Task<Produto> ObterProduto(string id)
+        {
+            var table = _tableClient.GetTableReference("produtos");
+            table.CreateIfNotExistsAsync().Wait();
+
+            var query = new TableQuery<ProdutoEntity>()
+                .Where(
+                TableQuery.GenerateFilterCondition
+                ("PartitionKey", QueryComparisons.Equal, "13net"))
+
+                .Where(
+                TableQuery.GenerateFilterCondition
+                ("RowKey", QueryComparisons.Equal, id)
+                );
+
+
+            TableContinuationToken token = null;
+
+            var segment = await table.ExecuteQuerySegmentedAsync(query, token);
+            var produtoEntity = segment.FirstOrDefault();
+
+            return JsonConvert.DeserializeObject<Produto>(produtoEntity.Produto);
+
         }
     }
 }

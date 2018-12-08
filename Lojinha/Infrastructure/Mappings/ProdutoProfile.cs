@@ -14,9 +14,9 @@ namespace Lojinha.Infrastructure.Mappings
         {
             CreateMap<Produto, ProdutoViewModel>()
             .ForMember(p => p.Id, vm => vm.MapFrom(x => x.Id))
-            .ForMember(p => p.Id, vm => vm.MapFrom(x => x.Nome))
-            .ForMember(p => p.Id, vm => vm.MapFrom(x => x.Preco))
-            .ForMember(p => p.Id, vm => vm.MapFrom(x => x.ImagemPrincipalUrl))
+            .ForMember(p => p.Nome, vm => vm.MapFrom(x => x.Nome))
+            .ForMember(p => p.Preco, vm => vm.MapFrom(x => x.Preco))
+            .ForMember(p => p.ImageUrl, vm => vm.MapFrom(x => x.ImagemPrincipalUrl));
           
         }
     }

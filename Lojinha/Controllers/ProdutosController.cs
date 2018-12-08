@@ -27,7 +27,7 @@ namespace Lojinha.Controllers
         {            
             var produto = new Produto
             {
-                Id = 331511,
+                Id = 11111,
                 Nome = "Asus ZenFone 5",
                 Categoria = new Categoria
                 {
@@ -45,8 +45,8 @@ namespace Lojinha.Controllers
                 {
                     "Asus","Celular","SmartPhone"
                 },
-                ImagemPrincipalUrl = "https://icdn3.digitaltrends.com/image/asus-zenfone-5-review-8-1200x630-c-ar1.91.jpg"
-                
+                ImagemPrincipalUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4Y-x8uZgGEU1taFVmBRfMtvaNTO4f2YDbR8AEet_DxRat8OU"
+
             };
            // _azureStorage.AddProduto(produto);
             return Content("OK");
@@ -56,11 +56,17 @@ namespace Lojinha.Controllers
         {
 
             var produtos = await _produtoServices.ObterProdutos();
-            var vm = _mapper.Map<ProdutoViewModel>(produtos);
+            var vm = _mapper.Map<List<ProdutoViewModel>>(produtos);
 
             return View(vm);
 
             //return Json(await _produtoServices.ObterProdutos());
+        }
+
+        public async Task<IActionResult> Details(string id)
+        {
+            var produto = await _produtoServices.ObterProduto(id);
+            return Json(produto);
         }
     }
 }
